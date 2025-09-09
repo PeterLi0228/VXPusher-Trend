@@ -1,12 +1,23 @@
-name: Daily WeChat Trend Push
+name: Daily Hot Trend Push
 
 on:
   schedule:
     # 每天上午10点推送 (UTC时间2点，北京时间10点)
     - cron: '0 2 * * *'
   
-  # 允许手动触发
+  # 允许手动触发，支持选择推送模式
   workflow_dispatch:
+    inputs:
+      push_mode:
+        description: '推送模式选择'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - weixin
+        - weibo  
+        - douyin
 
 jobs:
   push-trends:
@@ -31,5 +42,6 @@ jobs:
         TIANAPI_KEY: ${{ secrets.TIANAPI_KEY }}
         WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
         TARGET_UIDS: ${{ secrets.TARGET_UIDS }}
+        PUSH_MODE: ${{ inputs.push_mode || 'all' }}
       run: |
-        python wx_trend_pusher.py
+        python wx_trend_pusher.py ${{ inputs.push_mode || 'all' }}
