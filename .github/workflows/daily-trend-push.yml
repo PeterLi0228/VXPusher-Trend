@@ -1,0 +1,35 @@
+name: Daily WeChat Trend Push
+
+on:
+  schedule:
+    # 每天上午10点推送 (UTC时间2点，北京时间10点)
+    - cron: '0 2 * * *'
+  
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  push-trends:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run trend pusher
+      env:
+        TIANAPI_KEY: ${{ secrets.TIANAPI_KEY }}
+        WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+        TARGET_UIDS: ${{ secrets.TARGET_UIDS }}
+      run: |
+        python wx_trend_pusher.py
