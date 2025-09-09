@@ -3,6 +3,7 @@
 .env.local
 .env.production
 .env.development
+.clauderc
 
 # Python cache
 __pycache__/
